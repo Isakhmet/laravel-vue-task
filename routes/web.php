@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('file-import-export', [CompanyController::class, 'fileImportExport']);
+Route::post('file-import', [CompanyController::class, 'fileImport'])->name('file-import');
