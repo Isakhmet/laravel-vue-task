@@ -20,3 +20,5 @@ Route::get('/', function () {
 
 Route::get('file-import-export', [CompanyController::class, 'fileImportExport']);
 Route::post('file-import', [CompanyController::class, 'fileImport'])->name('file-import');
+
+Route::get('chart', [CompanyController::class, 'chart']);

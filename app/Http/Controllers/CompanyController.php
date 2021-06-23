@@ -6,6 +6,7 @@ use App\Helpers\ExcelFields;
 use App\Models\Company;
 use App\Models\Fact;
 use App\Models\Forecast;
+use ArielMejiaDev\LarapexCharts\LarapexChart;
 use Illuminate\Http\Request;
 
 
@@ -117,5 +118,53 @@ class CompanyController extends Controller
         return [
             'success' => true,
         ];
+    }
+
+    public function chart()
+    {
+        $data        = [];
+        $companyName = 'company1';
+
+        $facts = Fact::with('company')
+                     ->whereHas(
+                         'company', function ($q) use ($companyName) {
+                         $q->where('name', '=', $companyName);
+                     }
+                     )
+                     ->get(['Qoil', 'company_id', 'date'])
+        ;
+
+        if ($facts->count() > 0) {
+            foreach ($facts as $fact) {
+                $data['fact']['date'][] = $fact->date;
+                $data['fact']['Qoil'][] = $fact->Qoil;
+            }
+        }
+
+        $forecasts = Forecast::with('company')
+                     ->whereHas(
+                         'company', function ($q) use ($companyName) {
+                         $q->where('name', '=', $companyName);
+                     }
+                     )
+                     ->whereIn('date', $data['fact']['date'])
+                     ->get(['Qoil', 'company_id', 'date'])
+        ;
+
+        if ($forecasts->count() > 0) {
+            foreach ($forecasts as $forecast) {
+                $data['forecast']['Qoil'][] = $forecast->Qoil;
+            }
+        }
+
+        $chart = (new LarapexChart)->lineChart()
+                                   ->setTitle($companyName)
+                                   ->setSubtitle('Qoil.')
+                                   ->addData('Fact', $data['fact']['Qoil'])
+                                   ->addData('Forecast', $data['forecast']['Qoil'])
+                                   ->setXAxis($data['fact']['date'])
+        ;
+
+        return view('chart', compact('chart'));
     }
 }
