@@ -17,11 +17,6 @@ class CompanyController extends Controller
         return view('import');
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return bool[]
-     */
     public function fileImport(Request $request)
     {
         $fields = (new ExcelFields())->transform(
@@ -115,9 +110,7 @@ class CompanyController extends Controller
             }
         }
 
-        return [
-            'success' => true,
-        ];
+        return view('table');
     }
 
     public function chart()
@@ -166,5 +159,17 @@ class CompanyController extends Controller
         ;
 
         return view('chart', compact('chart'));
+    }
+
+    public function fact()
+    {
+        $facts = Fact::with('company')->get();
+        return response()->json($facts);
+    }
+
+    public function forecast()
+    {
+        $facts = Forecast::with('company')->get();
+        return response()->json($facts);
     }
 }

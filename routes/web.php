@@ -14,11 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('file-import-export', [CompanyController::class, 'fileImportExport']);
+Route::get('/', [CompanyController::class, 'fileImportExport']);
 Route::post('file-import', [CompanyController::class, 'fileImport'])->name('file-import');
 
 Route::get('chart', [CompanyController::class, 'chart']);
+Route::get('fact', [CompanyController::class, 'fact']);
+Route::get('forecast', [CompanyController::class, 'forecast']);
+Route::get('show', function (){
+    return view('table');
+});
